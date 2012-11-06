@@ -101,22 +101,23 @@ package {
 			}
 		}	
 		
+		private function addTileToMap( looseTile:Tile, columnIndex:uint, rowIndex:uint ):Tile {
+			looseTile.tileDepthOffset = ( columnIndex << TILE_SHIFT_WIDTH ); 
+			looseTile.x               = origin.x + (  columnIndex << TILE_SHIFT_WIDTH ); 
+			looseTile.y               = origin.y + rowIndex << TILE_SHIFT_WIDTH;
+			looseTile.velocity.x      = this.velocity;
+			this.tileMap[columnIndex][rowIndex] = looseTile;
+			return looseTile;
+		}
+		
 		private function assignTileToMap( rowIndex:uint, columnIndex:uint, tile:uint, activeTileSet:FreewayTileSet ):void {
 			trace( columnIndex + ":" + tile );
-			if ( tile >= activeTileSet.length() ) {
+			if ( tile >= activeTileSet.length() || tile == 0 ) {
 				tile = 0;
-			}
-			
-			if ( tile == 0 ) {
 				return;
 			}
-			
-			this.tileMap[columnIndex][rowIndex] = (activeTileSet.tileList[tile] as Tile).clone();
-			(this.tileMap[columnIndex][rowIndex] as Tile).tileDepthOffset = (  columnIndex << TILE_SHIFT_WIDTH ); 
-			(this.tileMap[columnIndex][rowIndex] as Tile).x = origin.x + (  columnIndex << TILE_SHIFT_WIDTH ); 
-			(this.tileMap[columnIndex][rowIndex] as Tile).y = origin.y + rowIndex << TILE_SHIFT_WIDTH;
-			(this.tileMap[columnIndex][rowIndex] as Tile).velocity.x = this.velocity;
-			this.add( this.tileMap[columnIndex][rowIndex] );
+
+			this.add( this.addTileToMap( ( activeTileSet.tileList[tile] as Tile).clone() as Tile, columnIndex, rowIndex ) );
 			
 			if ( !this.screenPositionTile ) {
 				this.screenPositionTile = this.tileMap[columnIndex][rowIndex];
@@ -142,7 +143,7 @@ package {
 		public function setScreenXY( screenPosition:FlxPoint ):void {
 			pos = screenPosition.x;
 			for each ( var tileMapComponent:Tile in this.members ) {
-				tileMapComponent.x = pos;// + tileMapComponent.tileDepthOffset;				
+				tileMapComponent.x = pos;			
 			}
 		}
 		
@@ -182,33 +183,27 @@ package {
 			return clonedTileMap;
 		}		
 		
-		public function get next():TileMap 
-		{
+		public function get next():TileMap {
 			return _next;
 		}
 		
-		public function set next(value:TileMap):void 
-		{
+		public function set next(value:TileMap):void {
 			_next = value;
 		}
 		
-		public function get prev():TileMap 
-		{
+		public function get prev():TileMap {
 			return _prev;
 		}
 		
-		public function set prev(value:TileMap):void 
-		{
+		public function set prev(value:TileMap):void {
 			_prev = value;
 		}
 		
-		public function get isNext():Boolean 
-		{
+		public function get isNext():Boolean {
 			return _isNext;
 		}
 		
-		public function set isNext(value:Boolean):void 
-		{
+		public function set isNext(value:Boolean):void {
 			_isNext = value;
 		}		
 		
@@ -216,14 +211,11 @@ package {
 			if ( !parentLayer ) {
 				return;
 			}
-			isNext     = false;			
+			isNext      = false;			
 			prev.isNext = true;
 			
-			//trace( "current of " + this + "." + id + "(" + this.getMapDimensions().x + ") " );
 			newMapLocation.x = parentLayer.getScreenPosition().x - this.getMapDimensions().x;
-			//trace( "next of " + this + "." + id + "(" + newMapLocation.x + ") is " + parentLayer + "." + (parentLayer as LayeredTileMap ).id + "(" + (parentLayer as LayeredTileMap ).getScreenPosition().x + ")" );
 			this.setScreenPosition( newMapLocation );
-			//trace( "processed" );
 		}	
 		
 		override public function preUpdate():void {		

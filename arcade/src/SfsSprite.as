@@ -2,6 +2,7 @@ package {
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;	
+	import org.flixel.FlxBasic;
 	import org.flixel.FlxSprite;
 	import com.sixfootsoftware.IZOrderable;
 	
@@ -37,38 +38,53 @@ package {
 			return this._bakedRotation;
 		}
 		
-		override public function stamp(Brush:FlxSprite,X:int=0,Y:int=0 ):void
-		{
-			Brush.drawFrame();
-			var bitmap:Bitmap = Brush.framePixels;
+		private function resetEffect( Brush:FlxSprite ): void {
 			if ( stampEffect == "" ) {
 				stampEffect = Brush.blend;
 			}
-			
-			//Simple draw
-			if(((Brush.angle == 0) || ((Brush as SfsSprite).bakedRotation > 0)) && (Brush.scale.x == 1) && (Brush.scale.y == 1) && (Brush.blend == null))
-			{
-				_flashPoint.x = X;
-				_flashPoint.y = Y;
-				_flashRect2.width = bitmap.width;
-				_flashRect2.height = bitmap.height;
-				_pixels.copyPixels(bitmap.bitmapData,_flashRect2,_flashPoint,null,null,true);
-				_flashRect2.width = _pixels.width;
-				_flashRect2.height = _pixels.height;
-				calcFrame();
-				return;
-			}
-			
-			//Advanced draw
+		}
+		
+		private function isSimpleImage( Brush:FlxSprite ):Boolean {
+			return ((Brush.angle == 0) 
+			    || ((Brush as SfsSprite).bakedRotation > 0)) 
+				&& (Brush.scale.x == 1) 
+				&& (Brush.scale.y == 1) 
+				&& (Brush.blend == null);
+		}
+		
+		private function stampSimpleImage( Brush:FlxSprite, X:int = 0, Y:int = 0 ):void {
+			_flashPoint.x = X;
+			_flashPoint.y = Y;
+			_flashRect2.width = Brush.framePixels.width;
+			_flashRect2.height = Brush.framePixels.height;
+			_pixels.copyPixels( Brush.framePixels.bitmapData,_flashRect2,_flashPoint,null,null,true);
+			_flashRect2.width = _pixels.width;
+			_flashRect2.height = _pixels.height;
+			calcFrame();
+		}		
+		
+		private function stampAdvancedImage( Brush:FlxSprite, X:int = 0, Y:int = 0 ):void {
+			this.resetEffect( Brush );
 			_matrix.identity();
 			_matrix.translate(-Brush.origin.x,-Brush.origin.y);
 			_matrix.scale(Brush.scale.x,Brush.scale.y);
 			if(Brush.angle != 0)
 				_matrix.rotate(Brush.angle * 0.017453293);
 			_matrix.translate(X+Brush.origin.x,Y+Brush.origin.y);
-			_pixels.draw(bitmap,_matrix,null,stampEffect,null,Brush.antialiasing);
+			_pixels.draw(Brush.framePixels,_matrix,null,stampEffect,null,Brush.antialiasing);
 			calcFrame();
 			stampEffect = "";
+		}
+		
+		override public function stamp(Brush:FlxSprite,X:int=0,Y:int=0 ):void {
+			Brush.drawFrame();
+			var bitmap:Bitmap = Brush.framePixels;
+
+			if ( this.isSimpleImage( Brush ) ) {
+				return this.stampSimpleImage( Brush, X, Y );
+			}
+			
+			return this.stampAdvancedImage( Brush, X, Y );
 		}		
 
 	}
