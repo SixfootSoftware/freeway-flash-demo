@@ -4,7 +4,8 @@ package {
 
 	public class Registry {
 		
-		private static var defaultCar:Car;	
+		private static var _defaultCar:Car;	
+		private static var _policeCar:Car;	
 		
 		private static var _road:Road;
 		private static var _player:Player;
@@ -13,6 +14,7 @@ package {
 		static public function register():void {
 			
 			defaultCar = new SaloonCar();			
+			policeCar  = new PoliceCar();			
 			road       = new Road();
 			player     = new Player( defaultCar );		
 			nightScene = new NightScene();
@@ -46,6 +48,26 @@ package {
 		static public function set nightScene(value:NightScene):void 
 		{
 			_nightScene = value;
+		}
+		
+		static public function get policeCar():Car 
+		{
+			return _policeCar;
+		}
+		
+		static public function set policeCar(value:Car):void 
+		{
+			_policeCar = value;
+		}
+		
+		static public function get defaultCar():Car 
+		{
+			return _defaultCar;
+		}
+		
+		static public function set defaultCar(value:Car):void 
+		{
+			_defaultCar = value;
 		}
 		
 		
