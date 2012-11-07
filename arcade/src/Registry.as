@@ -9,6 +9,7 @@ package {
 		
 		private static var _road:Road;
 		private static var _player:Player;
+		private static var _enemy:Enemy;
 		private static var _nightScene:NightScene;
 		
 		static public function register():void {
@@ -16,7 +17,8 @@ package {
 			defaultCar = new SaloonCar();			
 			policeCar  = new PoliceCar();			
 			road       = new Road();
-			player     = new Player( defaultCar );		
+			player     = new Player( policeCar );		
+			enemy      = new Enemy( defaultCar, Enemy.ENEMY_ROAD_LANE_1 );		
 			nightScene = new NightScene();
 		}
 		
@@ -68,6 +70,14 @@ package {
 		static public function set defaultCar(value:Car):void 
 		{
 			_defaultCar = value;
+		}
+		
+		static public function get enemy():Enemy {
+			return _enemy;
+		}
+		
+		static public function set enemy(value:Enemy):void {
+			_enemy = value;
 		}
 		
 		

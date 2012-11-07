@@ -19,6 +19,7 @@ package {
 			
 			this.add( Registry.road );			
 			this.add( Registry.player );	
+			this.add( Registry.enemy );	
 			
 			var level:Level1 = new Level1();
 			
@@ -44,6 +45,7 @@ package {
 			if ( Registry.nightScene.isNight || Registry.nightScene.alpha > 0 ) {
 				Registry.nightScene.reset();
 				Registry.player.stampNight( Registry.nightScene );
+				Registry.enemy.stampNight( Registry.nightScene );
 				Registry.nightScene.stamp( Registry.nightScene.sky, 0, 0 );
 			}
 		}

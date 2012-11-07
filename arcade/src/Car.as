@@ -1,4 +1,5 @@
 package {
+	import flash.display.GraphicsGradientFill;
 	import org.flixel.FlxEmitter;
 	import org.flixel.FlxPoint;
 	import org.flixel.FlxSprite;
@@ -16,9 +17,9 @@ package {
 		
 		public function Car( carGraphic:Class, carLightsGraphic:Class, width:int=111, height:int=60 ) {
 				
-			this.carSprite  = new FlxSprite( 400, 300 );
-			this.lights     = new FlxSprite( 400, 300 );
-			this._point     = new FlxPoint( 0, 0 );
+			this.carSprite  = new FlxSprite( -500, -500 );
+			this.lights     = new FlxSprite( -500, -500 );
+			this._point     = new FlxPoint( -500, -500 );
 			
 			this.carSprite.loadGraphic( carGraphic, true, false, width, height );
 			this.lights.loadGraphic( carLightsGraphic, false, false, 0, 0, true );
@@ -37,10 +38,32 @@ package {
 			this.add( emitter );
 			this.add( lights );
 			
+			resetLightPosition();
+		}
+		
+	    public function setVelocityX( velocity:int ):Car {
+			this.carSprite.velocity.x = velocity;
+			this.lights.velocity.x    = velocity;
+			return this;
+		}
+		
+		public function setVelocityY( velocity:int ):Car {
+			this.carSprite.velocity.y = velocity;
+			this.lights.velocity.y    = velocity;
+			return this;
+		}
+		
+		public function setPosition( x:int, y:int ):Car {
+			this.carSprite.x = x;
+			this.carSprite.y = y;
+			resetLightPosition();
+			return this;
+		}
+		
+		private function resetLightPosition(): void {
 			_point = this.carSprite.getMidpoint();
-			this.lights.x = _point.x - ( carSprite.width>>1 ) - 150;
-			this.lights.y = _point.y - ( carSprite.height>>1 );			
-
+			this.lights.x = _point.x - ( carSprite.width>>1 ) - 142;
+			this.lights.y = _point.y - ( carSprite.height>>1 ) + 5;	
 		}
 		
 		private function loadSmokeEmitter(): FlxEmitter {
@@ -92,11 +115,6 @@ package {
 					}
 				}
 			}
-			_point = this.carSprite.getMidpoint();
-			this.lights.x = _point.x - ( carSprite.width>>1 ) - 142;
-			this.lights.y = _point.y - ( carSprite.height>>1 ) + 5;				
-			
-			
 		}
 		
 		public function stampNight( night:NightScene ):void {

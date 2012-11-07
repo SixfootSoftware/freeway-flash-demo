@@ -6,26 +6,36 @@ package {
 		
 		public function Player( customCar:Car ) {
 			super( customCar );			
+			customCar.setPosition( 400, 300 );
+		}
+		
+		override public function preUpdate():void {
+			this.zOrder = this.calculateZOrder();
 		}
 		
 		override public function update():void {
 			
 			if (FlxG.keys.pressed("LEFT") ) {
-				this.car.carSprite.velocity.x = -100;
+				this.car.setVelocityX( -ACTOR_MOVEMENT_DEFAULT_VELOCITY );
+				
+			} else if (FlxG.keys.pressed("RIGHT")) {
+				this.car.setVelocityX( ACTOR_MOVEMENT_DEFAULT_VELOCITY );
 			} else {
-				if (FlxG.keys.pressed("RIGHT")) {
-					this.car.carSprite.velocity.x = 100;
-				} else {
-					this.car.carSprite.velocity.x = 0;
-				}
+				this.car.setVelocityX( ACTOR_MOVEMENT_STOPPED );
 			}
 			
 			if (FlxG.keys.justPressed( "ONE" ) ) {
-				this.changeCar( Registry.defaultCar );
+				Registry.enemy.changeLane( Enemy.ENEMY_ROAD_LANE_1 );
 			}			
 			
 			if (FlxG.keys.justPressed( "TWO" ) ) {
-				this.changeCar( Registry.policeCar );
+				Registry.enemy.changeLane( Enemy.ENEMY_ROAD_LANE_2 );
+			}			
+			if (FlxG.keys.justPressed( "THREE" ) ) {
+				Registry.enemy.changeLane( Enemy.ENEMY_ROAD_LANE_3 );
+			}			
+			if (FlxG.keys.justPressed( "FOUR" ) ) {
+				Registry.enemy.changeLane( Enemy.ENEMY_ROAD_LANE_4 );
 			}
 			
 			if (FlxG.keys.justPressed( "K" ) ) {
@@ -38,14 +48,12 @@ package {
 				trace( Registry.nightScene.backdrop.zOrder );
 			}			
 
-			if (FlxG.keys.pressed("UP") && this.car.carSprite.y > 175 ) {
-				this.car.carSprite.velocity.y = -100;
+			if (FlxG.keys.pressed("UP") && this.car.carSprite.y > ACTOR_ROAD_BOUNDS_TOP ) {
+				this.car.setVelocityY( -ACTOR_MOVEMENT_DEFAULT_VELOCITY );
+			} else if (FlxG.keys.pressed("DOWN") && this.car.carSprite.y < ACTOR_ROAD_BOUNDS_BOTTOM ) {
+				this.car.setVelocityY( ACTOR_MOVEMENT_DEFAULT_VELOCITY );
 			} else {
-				if (FlxG.keys.pressed("DOWN") && this.car.carSprite.y < 387 ) {
-					this.car.carSprite.velocity.y = 100;
-				} else {
-					this.car.carSprite.velocity.y = 0;
-				}
+				this.car.setVelocityY( ACTOR_MOVEMENT_STOPPED );
 			}
 			
 			super.update()
